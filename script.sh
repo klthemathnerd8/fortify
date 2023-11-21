@@ -12,7 +12,6 @@ echo 'APT::Periodic::Update-Package-Lists "1";' | sudo tee -a /etc/apt/apt.conf.
 echo 'APT::Periodic::Download-Upgradeable-Packages "1";' | sudo tee -a /etc/apt/apt.conf.d/10periodic
 echo 'APT::Periodic::AutocleanInterval "1";' | sudo tee -a /etc/apt/apt.conf.d/10periodic
 echo 'APT::Periodic::Unattended-Upgrade "1";' | sudo tee -a /etc/apt/apt.conf.d/10periodic
-
 echo "Automatic updates have been configured to run daily."
 
 
@@ -32,10 +31,15 @@ echo "Disabled IPv4 Forwarding."
 
 #update app
 echo "Updating applications..."
+if command -v apt-get &>/dev/null; then
+    sudo apt-get update
+    sudo apt-get upgrade -y
+elif command -v yum &>/dev/null; then
+    sudo yum update -y
+else
+    echo "Unsupported package manager. Exiting."
+    exit 1
+fi
 
-apt update
-apt upgrade -y
-apt autoremove -y
-apt clean
 
 echo "Update completed successfully."
