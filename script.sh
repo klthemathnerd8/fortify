@@ -29,3 +29,13 @@ echo "Passwords done."
 echo "Disabling IPv4 Forwarding..."
 sudo echo 0 > /proc/sys/net/ipv4/ip_forward
 echo "Disabled IPv4 Forwarding."
+
+#update app
+echo "Updating applications..."
+
+apt update
+apt upgrade -y
+apt autoremove -y
+apt clean
+
+echo "Update completed successfully."
