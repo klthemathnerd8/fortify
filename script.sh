@@ -1,12 +1,23 @@
 #!/bin/bash
 
+# Function to clear the screen
+clear_screen() {
+    if command -v tput &>/dev/null; then
+        tput clear
+    elif command -v clear &>/dev/null; then
+        clear
+    else
+        echo "Screen clearing not supported in this environment."
+    fi
+}
+
 # Function to enable firewall
 enable_firewall() {
     echo "Enabling firewall..."
     sudo ufw enable
     echo "Enabled firewall."
     sleep 3
-    clear
+    clear_screen
 }
 
 # Function to configure update settings
@@ -18,7 +29,7 @@ configure_update_settings() {
     echo 'APT::Periodic::Unattended-Upgrade "1";' | sudo tee -a /etc/apt/apt.conf.d/10periodic
     echo "Automatic updates have been configured to run daily."
     sleep 3
-    clear
+    clear_screen
 }
 
 # Function to set passwords for all users
@@ -31,7 +42,7 @@ set_passwords() {
     done
     echo "Passwords done."
     sleep 3
-    clear
+    clear_screen
 }
 
 # Function to disable IPv4 forwarding
@@ -40,7 +51,7 @@ disable_ipv4_forwarding() {
     echo 0 | sudo tee /proc/sys/net/ipv4/ip_forward
     echo "Disabled IPv4 Forwarding."
     sleep 3
-    clear
+    clear_screen
 }
 
 # Function to update applications
@@ -57,7 +68,16 @@ update_apps() {
     fi
     echo "Update completed successfully."
     sleep 3
-    clear
+    clear_screen
+}
+
+# Function to set password max age
+set_password_max_age() {
+    read -p "Enter the maximum password age (in days): " max_age
+    sudo chage --maxdays $max_age --allusers
+    echo "Maximum password age set to $max_age days for all users."
+    sleep 3
+    clear_screen
 }
 
 # Main menu
@@ -68,6 +88,7 @@ while true; do
     echo "[3] SetPass"
     echo "[4] Disable IPv4 Forwarding"
     echo "[5] Update Apps"
+    echo "[6] Set Password Max Age"
     echo "[Q] Quit"
 
     read -p "Choose an option: " option
@@ -78,6 +99,7 @@ while true; do
         3) set_passwords ;;
         4) disable_ipv4_forwarding ;;
         5) update_apps ;;
+        6) set_password_max_age ;;
         q|Q) echo "Exiting."; exit ;;
         *) echo "Invalid option. Please choose again." ;;
     esac
