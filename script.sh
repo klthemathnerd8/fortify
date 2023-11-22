@@ -20,6 +20,48 @@ enable_firewall() {
     clear_screen
 }
 
+#Function to manage users
+usermanage() {
+USERS=($(getent passwd | cut -d: -f1))
+CURRENT_USER_INDEX=0
+
+while [ $CURRENT_USER_INDEX -lt ${#USERS[@]} ]; do
+    CURRENT_USER=${USERS[$CURRENT_USER_INDEX]}
+    ADMIN_STATUS=$(id -u $CURRENT_USER)
+
+    echo "Administrator $CURRENT_USER, $ADMIN_STATUS."
+    echo "[1] Grant admin (makes them administrator if not one already)"
+    echo "[2] Remove admin (makes them common user if not one already)"
+    echo "[3] Remove the user and their files (gives a warning)"
+    echo "[4] Move on to the next user (unless this is the last user, upon which it quits.)"
+
+    read -p "Choose an option: " OPTION
+
+    case $OPTION in
+        1) # Grant admin
+            sudo usermod -aG sudo $CURRENT_USER
+            ;;
+        2) # Remove admin
+            sudo deluser $CURRENT_USER sudo
+            ;;
+        3) # Remove user and files
+            read -p "Are you sure you want to remove user $CURRENT_USER and their files? (y/n): " CONFIRM
+            if [ "$CONFIRM" == "y" ]; then
+                sudo deluser --remove-home $CURRENT_USER
+            else
+                echo "Operation canceled."
+            fi
+            ;;
+        4) # Move to next user
+            ((CURRENT_USER_INDEX++))
+            ;;
+        *) # Invalid option
+            echo "Invalid option. Please choose again."
+            ;;
+    esac
+done
+}
+
 # Function to configure update settings
 configure_update_settings() {
     echo "Configuring updates..."
@@ -89,6 +131,7 @@ while true; do
     echo "[4] Disable IPv4 Forwarding"
     echo "[5] Update Apps"
     echo "[6] Set Password Max Age"
+    echo "[7] Manage Users"
     echo "[Q] Quit"
 
     read -p "Choose an option: " option
@@ -100,6 +143,7 @@ while true; do
         4) disable_ipv4_forwarding ;;
         5) update_apps ;;
         6) set_password_max_age ;;
+        7) usermanage ;;
         q|Q) echo "Exiting."; exit ;;
         *) echo "Invalid option. Please choose again." ;;
     esac
