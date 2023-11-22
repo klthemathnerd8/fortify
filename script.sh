@@ -5,6 +5,8 @@ enable_firewall() {
     echo "Enabling firewall..."
     sudo ufw enable
     echo "Enabled firewall."
+    sleep 3
+    clear
 }
 
 # Function to configure update settings
@@ -15,6 +17,8 @@ configure_update_settings() {
     echo 'APT::Periodic::AutocleanInterval "1";' | sudo tee -a /etc/apt/apt.conf.d/10periodic
     echo 'APT::Periodic::Unattended-Upgrade "1";' | sudo tee -a /etc/apt/apt.conf.d/10periodic
     echo "Automatic updates have been configured to run daily."
+    sleep 3
+    clear
 }
 
 # Function to set passwords for all users
@@ -26,6 +30,8 @@ set_passwords() {
         echo "Password for user '$USER' has been set to the current user's password."
     done
     echo "Passwords done."
+    sleep 3
+    clear
 }
 
 # Function to disable IPv4 forwarding
@@ -33,6 +39,8 @@ disable_ipv4_forwarding() {
     echo "Disabling IPv4 Forwarding..."
     echo 0 | sudo tee /proc/sys/net/ipv4/ip_forward
     echo "Disabled IPv4 Forwarding."
+    sleep 3
+    clear
 }
 
 # Function to update applications
@@ -48,6 +56,8 @@ update_apps() {
         exit 1
     fi
     echo "Update completed successfully."
+    sleep 3
+    clear
 }
 
 # Main menu
